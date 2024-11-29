@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOTEL LIGHT PLAZA</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="img/logo.jpg" alt="Logo" class="logo">
+        <h2>Hotel Light Plaza</h2>
+        <ul>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="reservas.html">RESERVAR HABITACION</a></li>
+            <li><a href="calendario.html">CALENDARIO</a></li>
+            <li><a href="reportes.html">REPORTES</a></li>
+            <li><a href="usuarios.html">CLIENTES</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <h1>Habitaciones Disponibles</h1>
+        <div class="room-grid" id="room-grid"></div>
+    </div>
+
+    <!-- Formulario emergente -->
+    <div id="form-popup" class="form-popup">
+        <form id="client-form" class="form-container" method="POST" action="registrar_cliente.php">
+            <h2>Registrar Cliente</h2>
+            <label for="idCliente"><b>CEDULA</b></label>
+            <input type="text" name="idCliente" id="idCliente" placeholder="Ingrese la cédula" required>
+        
+            <label for="Nombre"><b>NOMBRE</b></label>
+            <input type="text" name="Nombre" id="Nombre" placeholder="Ingrese el nombre" required>
+        
+            <label for="Correo"><b>CORREO ELECTRÓNICO</b></label>
+            <input type="email" name="Correo" id="Correo" placeholder="Ingrese el correo" >
+
+            <label for="precio"><b>PRECIO</b></label>
+            <input type="number" name="precio" id="precio" placeholder="Ingrese el precio" required min="0" step="0.01">
+
+            <input type="hidden" name="roomNumber" id="room-number">
+
+        
+            <button type="submit" class="btn">Confirmar</button>
+            <button type="button" class="btn cancel" onclick="closeForm()">Cancelar</button>
+        </form>
+        
+    </div>
+
+    <script>
+        // Asegurarse de que el script esté completamente cargado y que la función esté accesible
+        document.addEventListener('DOMContentLoaded', () => {
+            const roomGrid = document.getElementById('room-grid');
+            const formPopup = document.getElementById('form-popup');
+            const clientForm = document.getElementById('client-form');
+            const roomNumberInput = document.getElementById('room-number');
+            const roomsStatus = JSON.parse(localStorage.getItem('roomsStatus')) || {};
+            
+            // Crear habitaciones numeradas del 203 al 223
+            for (let i = 203; i <= 223; i++) {
+                let room = document.createElement('div');
+                room.classList.add('room');
+                room.setAttribute('data-room', i);
+                updateRoomDisplay(room, i, roomsStatus[i] && roomsStatus[i].occupied);
+                room.addEventListener('click', () => openForm(i));
+                roomGrid.appendChild(room);
+            }
+    
+            // Función para mostrar mensajes (Toast)
+            function showToast(message, type) {
+                const toastContainer = document.createElement('div');
+                toastContainer.classList.add('toast', type);
+                toastContainer.textContent = message;
+    
+                document.body.appendChild(toastContainer);
+    
+                setTimeout(() => {
+                    toastContainer.classList.add('show');
+                }, 10);
+    
+                setTimeout(() => {
+                    toastContainer.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(toastContainer);
+                    }, 300); // Duración de la animación de desaparición
+                }, 3000); // Tiempo que permanece visible
+            }
+    
+            // Abrir el formulario
+            function openForm(roomNumber) {
+                let roomElement = document.querySelector(`.room[data-room='${roomNumber}']`);
+                if (!roomElement.classList.contains('occupied')) {
+                    formPopup.style.display = 'block';
+                    roomNumberInput.value = roomNumber;
+                }
+            }
+    
+            // Cerrar el formulario
+            window.closeForm = function () {
+                formPopup.style.display = 'none';
+                clientForm.reset();
+            };
+    
+            // Actualizar la visualización de la habitación
+            function updateRoomDisplay(roomElement, roomNumber, occupied) {
+                const tooltip = document.createElement('div');
+                tooltip.classList.add('tooltip');
+    
+                if (occupied) {
+                    roomElement.classList.add('occupied');
+                    roomElement.innerHTML = `
+                        <img src="img/cama.png" alt="Habitación ${roomNumber}">
+                        <br>HABITACIÓN ${roomNumber} (Ocupada)
+                        <br><button class="desocupar" data-room="${roomNumber}">Desocupar</button>
+                    `;
+    
+                    // Obtener la información del cliente almacenada
+                    const clientInfo = roomsStatus[roomNumber]?.client;
+                    if (clientInfo) {
+                        tooltip.innerHTML = `
+                            <strong>Habitación ${roomNumber} - Ocupada</strong>
+                            <br><strong>idCliente:</strong> ${clientInfo.idCliente}
+                            <br><strong>Nombre:</strong> ${clientInfo.Nombre}
+                            <br><strong>Correo:</strong> ${clientInfo.Correo}
+                            <br><strong>Precio:</strong> ${clientInfo.precio}
+                        `;
+                    }
+                } else {
+                    roomElement.classList.remove('occupied');
+                    roomElement.innerHTML = `
+                        <img src="img/cama.png" alt="Habitación ${roomNumber}">
+                        <br>HABITACIÓN ${roomNumber}
+                    `;
+                    tooltip.textContent = `Habitación ${roomNumber} - Disponible`;
+                }
+    
+                roomElement.appendChild(tooltip);
+    
+                // Asignar el evento de clic al botón "Desocupar"
+                const desocuparButton = roomElement.querySelector('.desocupar');
+                if (desocuparButton) {
+                    desocuparButton.addEventListener('click', (e) => {
+                        console.log('Botón Desocupar clickeado');
+                        e.stopPropagation();
+                        desocuparHabitacion(roomNumber); // Llamar la función desocuparHabitacion
+                    });
+                }
+            }
+    
+            // Función para desocupar habitación
+            function desocuparHabitacion(roomNumber) {
+                let roomElement = document.querySelector(`.room[data-room='${roomNumber}']`);
+    
+                fetch(`http://localhost:3000/api/desocupar/${roomNumber}`, {
+                    method: 'PUT',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);  // Agrega un log para verificar la respuesta del backend
+                    showToast(data.message, 'success');
+                    roomsStatus[roomNumber] = { occupied: false }; // Cambia el estado a "no ocupado"
+                    localStorage.setItem('roomsStatus', JSON.stringify(roomsStatus));
+                    updateRoomDisplay(roomElement, roomNumber, false); // Actualiza la visualización
+                })
+                .catch(error => {
+                    console.error('ERROR AL DESOCUPAR LA HABITACION:', error);
+                    showToast('Hubo un error al desocupar la habitación.', 'error');
+                });
+            }
+    
+            // Enviar los datos del formulario de registro
+            clientForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+    
+                let formData = {
+                    idCliente: document.getElementById('idCliente').value,
+                    Nombre: document.getElementById('Nombre').value,
+                    Correo: document.getElementById('Correo').value,
+                    precio: document.getElementById('precio').value,
+                    roomNumber: roomNumberInput.value
+                };
+    
+                fetch('http://localhost:3000/api/clientes', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(formData)
+})
+.then(response => {
+    console.log('Estado HTTP:', response.status);
+    return response.json();
+})
+.then(data => {
+    console.log('Respuesta del servidor:', data);
+    if (data.message === 'Cliente y habitación registrados correctamente') {
+        Swal.fire({
+            title: '¡Registro Exitoso!',
+            text: 'El cliente ha sido registrado correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            timer: 2000
+        });
+
+        // Actualiza la interfaz y cierra el formulario
+        roomsStatus[formData.roomNumber] = { 
+            occupied: true,
+            client: formData
+        };
+        localStorage.setItem('roomsStatus', JSON.stringify(roomsStatus));
+        updateRoomDisplay(document.querySelector(`.room[data-room='${formData.roomNumber}']`), formData.roomNumber, true);
+        closeForm();
+    } else {
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo registrar el cliente.',
+            icon: 'error',
+            confirmButtonText: 'Intentar de nuevo'
+        });
+    }
+})
+.catch(error => {
+    console.error('Error en la solicitud:', error);
+    Swal.fire({
+        title: 'Error en la solicitud',
+        text: 'Ocurrió un problema al registrar el cliente.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+    });
+});
+            });
+        });
+
+    </script>

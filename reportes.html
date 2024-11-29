@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOTEL LIGHT PLAZA</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <style>
+        
+
+        /* Contenido principal */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .form-container input[type="text"],
+        .form-container button {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .form-container button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra lateral -->
+    <div class="sidebar">
+        <img src="img/logo.jpg" alt="Logo" class="logo">
+        <h2>Hotel Light Plaza</h2>
+        <ul>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="reservas.html">RESERVAR HABITACIÓN</a></li>
+            <li><a href="calendario.html">CALENDARIO</a></li>
+            <li><a href="reportes.html">REPORTES</a></li>
+            <li><a href="usuarios.html">CLIENTES</a></li>
+        </ul>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <h1>Generar Reporte </h1>
+        <p>Selecciona un rango de fechas para generar el reporte:</p>
+
+        <div class="form-container">
+            <form action="generar_reporte.php" method="POST">
+                <label for="fecha_inicio">Fecha de Inicio:</label>
+                <input type="text" id="fecha_inicio" name="fecha_inicio" placeholder="Seleccionar fecha de inicio" required>
+
+                <label for="fecha_final">Fecha Final:</label>
+                <input type="text" id="fecha_final" name="fecha_final" placeholder="Seleccionar fecha final" required>
+
+                <button type="submit">Generar Reporte</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script de Flatpickr -->
+    <script>
+        // Inicializa Flatpickr para las fechas de inicio y final
+        flatpickr("#fecha_inicio", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "F j, Y",
+            locale: "es"
+        });
+
+        flatpickr("#fecha_final", {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "F j, Y",
+            locale: "es"
+        });
+    </script>
+</body>
+</html>

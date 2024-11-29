@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios</title>
+    <link rel="stylesheet" href="usuarios.css">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <div class="sidebar">
+        <img src="img/logo.jpg" alt="Logo" class="logo">
+        <h2>Hotel Light Plaza</h2>
+        <ul>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="reservas.html">RESERVAR HABITACION</a></li>
+            <li><a href="calendario.html">CALENDARIO</a></li>
+            <li><a href="reportes.html">REPORTES</a></li>
+            <li><a href="usuarios.html">CLIENTES</a></li>
+        </ul>
+    </div>
+
+    <div id="user-list">
+        <h1>Lista de Usuarios Registrados</h1>
+
+        <!-- Formulario de búsqueda -->
+        <div id="search-form">
+            
+            <label for="startDate">Fecha de inicio:</label>
+            <input type="date" id="startDate" required>
+            
+            <label for="endDate">Fecha final:</label>
+            <input type="date" id="endDate" required>
+            
+            <button onclick="buscarUsuarios()">Buscar</button>
+        </div>
+        
+
+        <table>
+            <thead>
+                <tr>
+                    
+                    <th>CEDULA</th>
+                    <th>NOMBRE</th>
+                    <th>CORREO</th>
+                    <th>PRECIO</th>
+                    <th>HABITACION</th>
+                </tr>
+            </thead>
+            <tbody id="users"></tbody>
+        </table>
+    </div>
+
+    <script>
+    function buscarUsuarios() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    if (!startDate || !endDate) {
+        alert("Por favor ingrese ambas fechas.");
+        return;
+    }
+
+    // Hacer una solicitud al archivo PHP con los parámetros de fecha
+    fetch(`usuarios.php?startDate=${startDate}&endDate=${endDate}`)
+        .then(response => response.json())
+        .then(users => {
+            const usersTableBody = document.getElementById('users');
+            usersTableBody.innerHTML = ""; // Limpiar la tabla antes de mostrar los resultados
+
+            if (users.length === 0) {
+                alert("No se encontraron usuarios en el rango de fechas especificado.");
+                return;
+            }
+
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+
+                const tdDni = document.createElement('td');
+                tdDni.textContent = user.idCliente; // Mostrar cédula
+                tr.appendChild(tdDni);
+
+                const tdName = document.createElement('td');
+                tdName.textContent = user.Nombre; // Mostrar nombre
+                tr.appendChild(tdName);
+
+                const tdEmail = document.createElement('td');
+                tdEmail.textContent = user.Correo; // Mostrar correo
+                tr.appendChild(tdEmail);
+
+                const tdPrice = document.createElement('td');
+                tdPrice.textContent = user.precio; // Mostrar precio
+                tr.appendChild(tdPrice);
+
+                const tdRoom = document.createElement('td');
+                tdRoom.textContent = user.roomNumber; // Mostrar número de habitación
+                tr.appendChild(tdRoom);
+
+                usersTableBody.appendChild(tr);
+            });
+        })
+        .catch(error => console.error('Error al cargar los usuarios:', error));
+}
+
+
+
+    </script>
+</body>
+</html>

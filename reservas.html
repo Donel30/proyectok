@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOTEL LIGHT PLAZA</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css"> <!-- Estilos de FullCalendar -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            background-color: #f2f2f2; /* Color de fondo más claro */
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2C3E50;
+            height: 100vh;
+            color: white;
+            padding: 15px;
+        }
+
+        .form-container {
+            flex: 1;
+            padding: 20px;
+            background-color: white;
+            margin-left: 20px;
+            margin-right: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+            .form-container h2 {
+                text-align: center;
+                margin-bottom: 20px;
+                color: #34495E; /* Color del título */
+            }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #34495E; /* Color de las etiquetas */
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px; /* Aumentar el padding */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra interior */
+        }
+
+        input[type="submit"] {
+            background-color: #34495E;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+            input[type="submit"]:hover {
+                background-color: #45a049; /* Color de hover */
+            }
+
+        .calendar-container {
+            margin-top: 20px; /* Espacio entre el formulario y el calendario */
+        }
+
+        #calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+    </style>
+
+    <!-- Incluir SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body>
+    <link rel="stylesheet" href="styles.css">
+    <div class="sidebar">
+        <img src="img/logo.jpg" alt="Logo" class="logo">
+        <h2>Hotel Light Plaza</h2>
+        <ul>
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="reservas.html">RESERVAR HABITACION</a></li>
+            <li><a href="calendario.html">CALENDARIO</a></li>
+            <li><a href="reportes.html">REPORTES</a></li>
+            <li><a href="usuarios.html">CLIENTES</a></li>
+        </ul>
+    </div>
+
+    <div class="form-container">
+        <h2>Formulario de Reservas</h2>
+        <form method="POST" action="reservas.php" id="reservaForm">
+            <!-- Campo oculto para el ID del usuario -->
+             
+            <input type="hidden" id="idUsuarios" name="idUsuarios" value="<!-- Código PHP para obtener el ID del usuario autenticado -->">
+
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="tel" id="telefono" name="telefono" required>
+
+            <label for="habitacion">Habitación:</label>
+            <select id="habitacion" name="habitacion" required>
+                <option value="" disabled selected>Seleccione una habitación</option>
+                <option value="203">Habitación 203</option>
+                <option value="204">Habitación 204</option>
+                <option value="205">Habitación 205</option>
+                <option value="206">Habitación 206</option>
+                <option value="207">Habitación 207</option>
+                <option value="208">Habitación 208</option>
+                <option value="209">Habitación 209</option>
+                <option value="210">Habitación 210</option>
+                <option value="211">Habitación 211</option>
+                <option value="212">Habitación 212</option>
+                <option value="213">Habitación 213</option>
+                <option value="214">Habitación 214</option>
+                <option value="215">Habitación 215</option>
+                <option value="216">Habitación 216</option>
+                <option value="217">Habitación 217</option>
+                <option value="218">Habitación 218</option>
+                <option value="219">Habitación 219</option>
+                <option value="220">Habitación 220</option>
+                <option value="221">Habitación 221</option>
+                <option value="222">Habitación 222</option>
+                <option value="223">Habitación 223</option>
+            </select>
+
+            <label for="precio">Precio:</label>
+            <input type="text" id="precio" name="precio" required>
+
+            <label for="fechaingreso">Fecha de Ingreso:</label>
+            <input type="date" id="fechaingreso" name="fechaingreso" required>
+
+            <label for="fechasalida">Fecha de Salida:</label>
+            <input type="date" id="fechasalida" name="fechasalida" required>
+
+
+
+            <!-- Campo oculto para el estado de la reserva -->
+            <input type="hidden" id="estadoReserva" name="estadoReserva" value="activo">
+
+            <input type="submit" value="Reservar">
+        </form>
+    </div>
+
+    <!-- Script para manejar la alerta -->
+    <script>
+        document.getElementById("reservaForm").addEventListener("submit", function (event) {
+            event.preventDefault(); // Evitar el envío del formulario inmediato
+
+            // Simular la respuesta del servidor
+            Swal.fire({
+                title: '¡Éxito!',
+                text: 'La reserva ha sido guardada con éxito.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            }).then(function () {
+                // Si el usuario confirma, se envía el formulario de manera tradicional
+                document.getElementById("reservaForm").submit();
+            });
+        });
+    </script>
+//
+</body>
+</html>

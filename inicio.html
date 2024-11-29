@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="inicio.css">
+    <title>Hotel Login</title>
+</head>
+<body>
+    <div class="login-container" id="login-container">
+        <div class="login-card">
+            <img src="img/logo.jpg" alt="Hotel Logo" class="logo">
+            <h2>ADMINISTRACIÓN Y GESTIÓN HOTEL LIGHT PLAZA</h2>
+            <form method="POST" action="login.php">
+                <!-- Campo para el correo -->
+                <div class="input-container">
+                    <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required>
+                </div>
+                <!-- Campo para la contraseña -->
+                <div class="input-container">
+                    <input type="password" id="password" name="password" placeholder="Contraseña" required>
+                </div>
+                <!-- Botón para iniciar sesión -->
+                <button type="submit" class="login-button">INICIAR SESIÓN</button>
+                <!-- Enlace para la recuperación de contraseña -->
+                <a href="recuperacion.php" class="forgot-password">¿Olvidaste tu contraseña?</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
